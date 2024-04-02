@@ -6,7 +6,7 @@ export function Navigation(){
             <Link to= "/tasks">
             <h1>Task App</h1>
             </Link>
-            <Link to = "/task-create">create task</Link>
+            <Link to = "/tasks-create">create task</Link>
         </div>
     )
 }
