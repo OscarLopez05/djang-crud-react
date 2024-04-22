@@ -1,0 +1,101 @@
+- pip install virtualenv
+- python.exe -m pip install --upgrade pip
+- python -m venv venv
+- F1 y buscar "Python Interpreter" y seleccionar la opción del env con la extrellita.
+- pip install django
+- django-admin startproject {nombre proyecto} . (para crear el proyecto de django)
+- python manage.py runserver (para ejecutar el proyecto)
+- python manage.py startapp (para crear una aplicacion)
+- pythin manage.py migrate (hace las migraciones correspondientes de las tablas a utilizar
+- pip install djangorestframework (para instalar el modulo)
+- pip install django-cors-headers (para indicar y configurar que los servidores funcionen en la misma ruta)
+ NOTA: AGREGAR LAS RESPECTIVAS LIBRERIAS EN SETTINGS
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'corsheaders', ----------------
+    'rest_framework', -------------
+    'tasks' -----------------------
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware", -------------
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+] 
+
+
+NOTA: ASI MISMO EN SETTING CONFIRGURAR LOS SERVIDORES QUE SE PODRAN CONECTAR A DJANGO CON CORS_ALLOWED_ORIGINS = []
+
+- Se puede proceder a agregar una tabla o entidad en el archivo de models.py, como por ejemplo:
+
+class Task(models.Model):
+    title = models.CharField(max_length = 200)
+    description = models.TextField(blank = True)
+    done = models.BooleanField(default = False)
+
+- python manage.py makemigration 
+- python manage.py migrate tasks para crear la tabla como tal
+- python manege.py createsuperuser para crear el acceso al apartado de /admin
+NOTA: Yendo a admin.py y agregando las lineas de codigo siguiente: 
+from .models import Task -> aqui importo el modelo de Task para poder utilizarlo
+# Register your models here.
+admin.site.register(Task) -> aqui le indico a admin que podrá hacer uso de la funcion registrer para registrar datos para el modelo de Task
+- crear el archivo serializer en la carpeta de tasks y agregar el metotod encargado de serializar los datos:
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = 'task'
+        fields = '__all__' -> aqui le indicamos que serialize todos los atributos de la tabla
+- En views.py se pueden crear los accesos a las vistas que vamos a ocupar para ver desde el front, por ejemplo puede quedar asi:
+
+from django.shortcuts import render
+from rest_framework import viewsets
+from .serializer import TaskSerializer
+from .models import Task
+
+# Create your views here.
+class TastView(viewsets.ModelViewSet):
+    serializer_class = TaskSerializer
+    queryset = Task.objects.all()
+
+- Crear urls.py y editar el archivo
+- Asi mismo editar el archivo de urls.py de la carpeta raiz para que reconozca la nueva ruta tambien
+- Se procede a probar la api en postman
+- Se procede a instalar core para documentar nuestro proyecto backend con pip install coreapi
+- Asi mismo añadir el core en settings de la app
+- Asi mismo agregarlo en el apartado de urls de tasks
+- Se agrega al final de settings:
+REST_FRAMEWORK = {
+        'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    }
+y se visita la ruta /tasks/docs/ para ver la documentacion
+NOTA: Para poder ejecutar proyectos de frontend es necesario verificar que tenemos instalado node js, se procede a ejecutar: node --version	
+- se procede a crear el proyecto de vite, npm create vite, se selecciona JavaScript
+- se cambia a la carpeta de cliente con cd client
+- npm install
+- npm run dev para correr el proyecto de vite
+- npm i react-router-dom react-hot-toast axios react-hook-form
+- Se procede a crear carpetas con nombres de pages, components y api
+- En pages se crean el archivo normal de pagina y otro con nombre de form
+- se edita App para que pueda reconocer las rutas
+<BrowserRouter>
+  <Routes>
+    <Route path="/usuario" element={<UsuarioPage/>} />
+  </Routes>
+</BrowserRouter>
+
+- Agregar ruta para /usuario-crear
+- Se crea un Navigation.jsx en la carpeta de components
+- Dentro del navigation colocar los Link para navegar entre rutas atraves de enlaces en la pagina
+- Crear un UsuarioList en components, el cual se encargará de cargar los usuarios creados en la api
+- crear usuario.api.jsx en api
